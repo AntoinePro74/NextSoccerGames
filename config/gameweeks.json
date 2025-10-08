@@ -1,0 +1,116 @@
+[
+  {
+    "gw": "GW16",
+    "startDate": "2025-10-07T14:00:00Z",
+    "endDate": "2025-10-10T13:59:00Z",
+    "timeZone": "Europe/Paris"
+  },
+  {
+    "gw": "GW17",
+    "startDate": "2025-10-10T14:00:00Z",
+    "endDate": "2025-10-14T13:59:00Z",
+    "timeZone": "Europe/Paris"
+  },
+  {
+    "gw": "GW18",
+    "startDate": "2025-10-14T14:00:00Z",
+    "endDate": "2025-10-17T13:59:00Z",
+    "timeZone": "Europe/Paris"
+  },
+  {
+    "gw": "GW19",
+    "startDate": "2025-10-17T14:00:00Z",
+    "endDate": "2025-10-21T13:59:00Z",
+    "timeZone": "Europe/Paris"
+  },
+  {
+    "gw": "GW20",
+    "startDate": "2025-10-21T14:00:00Z",
+    "endDate": "2025-10-24T13:59:00Z",
+    "timeZone": "Europe/Paris"
+  },
+  {
+    "gw": "GW21",
+    "startDate": "2025-10-24T14:00:00Z",
+    "endDate": "2025-10-28T13:59:00Z",
+    "timeZone": "Europe/Paris"
+  },
+  {
+    "gw": "GW22",
+    "startDate": "2025-10-28T14:00:00Z",
+    "endDate": "2025-10-31T13:59:00Z",
+    "timeZone": "Europe/Paris"
+  },
+  {
+    "gw": "GW23",
+    "startDate": "2025-10-31T14:00:00Z",
+    "endDate": "2025-11-04T13:59:00Z",
+    "timeZone": "Europe/Paris"
+  },
+  {
+    "gw": "GW24",
+    "startDate": "2025-11-04T14:00:00Z",
+    "endDate": "2025-11-07T13:58:00Z",
+    "timeZone": "Europe/Paris"
+  },
+  {
+    "gw": "GW25",
+    "startDate": "2025-11-07T14:00:00Z",
+    "endDate": "2025-11-11T13:59:00Z",
+    "timeZone": "Europe/Paris"
+  },
+  {
+    "gw": "GW26",
+    "startDate": "2025-11-11T14:00:00Z",
+    "endDate": "2025-11-14T13:59:00Z",
+    "timeZone": "Europe/Paris"
+  },
+  {
+    "gw": "GW27",
+    "startDate": "2025-11-14T14:00:00Z",
+    "endDate": "2025-11-18T13:59:00Z",
+    "timeZone": "Europe/Paris"
+  },
+  {
+    "gw": "GW28",
+    "startDate": "2025-11-18T14:00:00Z",
+    "endDate": "2025-11-21T13:59:00Z",
+    "timeZone": "Europe/Paris"
+  },
+  {
+    "gw": "GW29",
+    "startDate": "2025-11-21T14:00:00Z",
+    "endDate": "2025-11-25T13:59:00Z",
+    "timeZone": "Europe/Paris"
+  },
+  {
+    "gw": "GW30",
+    "startDate": "2025-11-25T14:00:00Z",
+    "endDate": "2025-11-28T13:59:00Z",
+    "timeZone": "Europe/Paris"
+  },
+  {
+    "gw": "GW31",
+    "startDate": "2025-11-28T14:00:00Z",
+    "endDate": "2025-12-02T13:59:00Z",
+    "timeZone": "Europe/Paris"
+  },
+  {
+    "gw": "GW32",
+    "startDate": "2025-12-02T14:00:00Z",
+    "endDate": "2025-12-05T13:59:00Z",
+    "timeZone": "Europe/Paris"
+  },
+  {
+    "gw": "GW33",
+    "startDate": "2025-12-05T14:00:00Z",
+    "endDate": "2025-12-09T13:59:00Z",
+    "timeZone": "Europe/Paris"
+  },
+  {
+    "gw": "GW34",
+    "startDate": "2025-12-09T14:00:00Z",
+    "endDate": "2025-12-12T13:59:00Z",
+    "timeZone": "Europe/Paris"
+  }
+]

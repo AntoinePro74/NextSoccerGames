@@ -64,7 +64,7 @@ if "last_update" not in st.session_state:
     st.session_state.last_update = load_last_update()
 
 
-if page == "Scraping Data":
+if page == "Load Data":
     col1, col2, col3 = st.columns([1, 1, 1.5])
     with col1:
         load_clicked = st.button(
