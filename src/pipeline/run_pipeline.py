@@ -17,8 +17,8 @@ def process_league(league):
     os.makedirs("data/processed", exist_ok=True)
     os.makedirs("data/team_stats", exist_ok=True)
     os.makedirs("data/upcoming_matches", exist_ok=True)
+    os.makedirs("data/analysis", exist_ok=True)
     os.makedirs("data/exports", exist_ok=True)
-
 
     fetch_gameweeks()
 
@@ -71,7 +71,7 @@ def process_league(league):
     results = analyze_gameweek(matches, df_stats_blended, max_goals=6)
 
     df_results = pd.DataFrame(results)
-    df_results.to_csv(f"data/exports/results_{league['Sorare League']}_{season}.csv", index=False)
+    df_results.to_csv(f"data/analysis/results_{league['Sorare League']}_{season}.csv", index=False)
     df_proba = df_future.merge(df_results, how="left", on=["Date","Home", "Away"])
     df_proba = df_proba.drop(columns=["lambda_home", "lambda_away"], errors="ignore")
     df_proba["Sorare Competition"] = league["Sorare competition"]
