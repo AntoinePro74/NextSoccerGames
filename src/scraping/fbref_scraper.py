@@ -24,12 +24,12 @@ def extract_fbref_schedule_table(url: str) -> pd.DataFrame:
         container = soup.find(lambda tag: tag.has_attr("id") and tag["id"].startswith("div_sched_"))
 
     if not container:
-        raise ValueError("Aucun conteneur calendrier trouvé sur la page.")
+        raise ValueError("No container calendar found on the page.")
 
     # 2️⃣ Extract the first table from the container
     table = container.find("table")
     if not table:
-        raise ValueError("Aucun tableau trouvé dans le conteneur calendrier.")
+        raise ValueError("No table found in the calendar container.")
 
     # 3️⃣ Extract the columns
     header = [th.get_text(strip=True) for th in table.find("thead").find_all("th")]

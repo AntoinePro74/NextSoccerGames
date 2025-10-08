@@ -4,13 +4,13 @@ from scipy.stats import poisson
 
 def compute_lambda(home_team: str, away_team: str, df_stats: pd.DataFrame) -> tuple[float, float]:
     """
-    Calcule les paramètres λ_home et λ_away avec une gestion réaliste des promus.
+    Compute the λ_home and λ_away parameters with realistic promotion management.
 
     Args:
-        home_team (str): Équipe qui joue à domicile
-        away_team (str): Équipe qui joue à l'extérieur
-        df_stats (pd.DataFrame): Statistiques des équipes de la saison précédente
-                                 (colonnes requises : Team, GF_home, GA_home, GF_away, GA_away, MP_home, MP_away)
+        home_team (str): Home team
+        away_team (str): Away team
+        df_stats (pd.DataFrame): Team statistics from the previous season
+            (required columns: Team, GF_home, GA_home, GF_away, GA_away, MP_home, MP_away)
 
     Returns:
         tuple[float, float]: λ_home, λ_away
@@ -32,16 +32,16 @@ def compute_lambda(home_team: str, away_team: str, df_stats: pd.DataFrame) -> tu
 
 def get_match_probabilities(lambda_home, lambda_away, max_goals=6):
     """
-    Calcule les probabilités de tous les scores possibles d'un match
-    ainsi que les probabilités de victoire, clean sheet, 3 buts et score le plus probable.
+    Compute the probabilities of all possible scores in a match
+    as well as the probabilities of a win, a clean sheet, three goals or more, and the most likely score.
 
     Args:
-        lambda_home (float): buts attendus à domicile
-        lambda_away (float): buts attendus à l'extérieur
-        max_goals (int): score max à considérer (ex: 6 = 0 à 6)
+        lambda_home (float): expected home goals
+        lambda_away (float): expected away goals
+        max_goals (int): maximum score to consider (e.g., 6 = 0 to 6)
 
     Returns:
-        dict: toutes les probabilités utiles (victoire, CS, 3GS, etc.)
+        dict: all useful probabilities (win, CS, 3GS, etc.)
     """
     score_matrix = np.zeros((max_goals + 1, max_goals + 1))
 
@@ -85,17 +85,17 @@ def analyze_gameweek(matches: list[tuple[str, str,str]],
                      df_stats: pd.DataFrame,
                      max_goals: int = 6) -> list[dict]:
     """
-    Analyse tous les matchs d'une gameweek et retourne les probabilités utiles.
-    Si une équipe promue n'a pas de stats, on utilise celles de l'adversaire (en inversant domicile/extérieur si nécessaire).
-
+    Analyzes all matches in a gameweek and returns useful probabilities.
+    If a promoted team has no stats, the opponent's stats are used (reversing home/away if necessary).
+    
     Args:
-        matches (list): liste de tuples (home_team, away_team)
-        df_stats (pd.DataFrame): table des stats d'équipes
-        league_avg_goals (float): moyenne de buts par match dans la ligue
-        max_goals (int): score max à considérer
+        matches (list): list of tuples (home_team, away_team)
+        df_stats (pd.DataFrame): table of team stats
+        league_avg_goals (float): average goals per match in the league
+        max_goals (int): maximum score to consider
 
     Returns:
-        list[dict]: une liste de dictionnaires de résultats par match
+        list[dict]: a list of dictionaries of results per match
     """
     results = []
 
@@ -125,6 +125,6 @@ def analyze_gameweek(matches: list[tuple[str, str,str]],
             })
 
         except Exception as e:
-            print(f"[ERREUR] Match {home_team} vs {away_team} : {e}")
+            print(f"[ERROR] Match {home_team} vs {away_team} : {e}")
 
     return results
