@@ -7,7 +7,7 @@ import os
 from src.dashboard.utils_data import load_last_update,save_last_update,load_data, load_gameweeks, assign_gameweek
 from src.pipeline.run_pipeline import run_all_leagues
 from src.scraping.utils_scraping import get_season
-from src.dashboard.utils_streamlit import get_top5_teams,get_dynamic_threshold #,get_best_teams,get_team_matches_details,compute_team_scores
+from src.dashboard.utils_streamlit import get_top5_teams,get_dynamic_threshold ,get_best_teams,get_team_matches_details
 
 # --- PAGE CONFIG ---
 st.set_page_config(
@@ -197,3 +197,95 @@ if page == "Sorare League & Gameweek":
     st.dataframe(
         df[columns_to_display].sort_values(by="%Home",ascending=False).style.format({col: "{:.2%}" for col in prob_columns if col in df.columns})
     )
+
+
+# --- Page Favorable Calendar---
+if page == "Favorable Calendar":
+    st.header("Favorable Calendar")
+    if st.session_state.get("last_update"):
+        st.markdown(f"**Last update :** {st.session_state['last_update'].strftime('%d/%m/%Y %H:%M')}")
+    else:
+        st.markdown("**Last update :** —")
+    with st.sidebar:
+        filter_type = st.radio("Filter by :", ["League", "Sorare Competition"])
+
+    col1, col2 = st.columns(2)
+    with col1:
+        if filter_type == "League":
+            league__or_competition = st.selectbox("Select a league", available_leagues)
+            league_info = next((l for l in leagues if l["Sorare League"] == league__or_competition), None)
+            season, last_season = get_season(league_info)
+            df = load_data(league__or_competition, season)
+        elif filter_type == "Sorare Competition":
+            league__or_competition = st.selectbox("Select a competition", available_competitions)
+            leagues_info = [league for league in leagues if (league["Sorare competition"] == league__or_competition) & (league["In-season"] ==True) ]
+            dfs=[]
+            for league_info in leagues_info:
+                season, last_season = get_season(league_info)
+                df_temp = load_data(league_info["Sorare League"], season)
+                dfs.append(df_temp)
+            if dfs:
+                df = pd.concat(dfs,ignore_index=True)
+            else:
+                st.error("No data found")
+                st.stop()   
+
+    # --- FILTER BY DATE ---
+    with col2:
+        date_range = st.date_input(
+            "Select date range",
+            value=(pd.Timestamp.today(), df["Date"].max()),
+            format="DD/MM/YYYY"
+        )
+
+    start_date, end_date = date_range
+    df_filtered = df[(df["Date"].dt.date >= start_date) & (df["Date"].dt.date <= end_date)]
+
+    # --- GET BEST TEAMS ---
+    df_best_defense = get_best_teams(df_filtered, "%H_CS", "%A_CS", "CS_Prob", method="mixed")
+    df_best_attack = get_best_teams(df_filtered, "%H_3GS", "%A_3GS", "Goals_Prob", method="mixed")
+
+    # === COLUMNS TO DISPLAY ===
+    distribution_cols = ["<25%", "25-35%", "35-45%", "45-55%", "55-70%", ">70%"]
+
+    # Display results side by side
+    col1, col2 = st.columns(2)
+
+    with col1:
+        threshold_defense = get_dynamic_threshold(df, "%H_CS", "%A_CS", percentile=70, min_threshold=0.25)
+        st.markdown(f"### 🛡️ Best defense - dynamic threshold: {threshold_defense:.2%}")
+
+        # Format defense dataframe
+        st.dataframe(
+            df_best_defense.rename(columns={"CS_Prob": "Score"})
+            .style.format({"Score": "{:.2f}"})  # Format score
+        )
+
+        # Details per team
+        for _, row in df_best_defense.iterrows():
+            with st.expander(f"📌 Details - {row['Team']}"):
+                details = get_team_matches_details(df_filtered, row["Team"], "%H_CS", "%A_CS", "CS_Prob")
+                st.dataframe(
+                    details[["Date", "Opponent", "Stadium", "CS_Prob"]]
+                    .style.format({"CS_Prob": "{:.2%}"})
+                )
+
+    with col2:
+        threshold_attack = get_dynamic_threshold(df, "%H_3GS", "%A_3GS", percentile=70, min_threshold=0.25)
+        st.markdown(f"### 🎯 Best attack - dynamic threshold: {threshold_attack:.2%}")
+
+        # Format attack dataframe
+        st.dataframe(
+            df_best_attack.rename(columns={"Goals_Prob": "Score"})
+            .style.format({"Score": "{:.2f}"})
+        )
+
+        # Details per team
+        for _, row in df_best_attack.iterrows():
+            with st.expander(f"📌 Details - {row['Team']}"):
+                details = get_team_matches_details(df_filtered, row["Team"], "%H_3GS", "%A_3GS", "Goals_Prob")
+                st.dataframe(
+                    details[["Date", "Opponent", "Stadium", "Goals_Prob"]]
+                    .style.format({"Goals_Prob": "{:.2%}"})
+                )
+
