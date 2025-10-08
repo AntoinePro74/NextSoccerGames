@@ -1,9 +1,13 @@
 import streamlit as st
 import json
 from datetime import datetime
+import pandas as pd
+import os
 
-from src.dashboard.utils_data import load_last_update,save_last_update#,load_data, load_gameweeks, assign_gameweek
+from src.dashboard.utils_data import load_last_update,save_last_update,load_data, load_gameweeks, assign_gameweek
 from src.pipeline.run_pipeline import run_all_leagues
+from src.scraping.utils_scraping import get_season
+from src.dashboard.utils_streamlit import get_top5_teams,get_dynamic_threshold #,get_best_teams,get_team_matches_details,compute_team_scores
 
 # --- PAGE CONFIG ---
 st.set_page_config(
@@ -41,8 +45,8 @@ st.markdown(
 )
 
 # --- CONFIG ---
-DATA_DIR = "/data/exports"
-METADATA_DIR = "/config"
+DATA_DIR = "data/exports"
+METADATA_DIR = "config"
 
 # --- SIDEBAR NAV ---
 pages = ["Load Data","Sorare League & Gameweek", "Favorable Calendar"]
@@ -96,3 +100,100 @@ if page == "Load Data":
 
     if stop_clicked :
         st.session_state.stop_pipeline = True
+
+# --- Page Sorare League & Gameweek ---
+if page == "Sorare League & Gameweek":
+    st.header("Sorare League & Gameweek")
+    if st.session_state.get("last_update"):
+        st.markdown(f"**Last update :** {st.session_state['last_update'].strftime('%d/%m/%Y %H:%M')}")
+    else:
+        st.markdown("**Last update :** —")
+    with st.sidebar:
+        filter_type = st.radio("Filter by :", ["League", "Sorare Competition"])
+
+    col1, col2 = st.columns(2)
+    with col1:
+        if filter_type == "League":
+            league__or_competition = st.selectbox("Select a league", available_leagues)
+            league_info = next((l for l in leagues if l["Sorare League"] == league__or_competition), None)
+            season, last_season = get_season(league_info)
+            df = load_data(league__or_competition, season)
+        elif filter_type == "Sorare Competition":
+            league__or_competition = st.selectbox("Select a competition", available_competitions)
+            leagues_info = [league for league in leagues if (league["Sorare competition"] == league__or_competition) & (league["In-season"] ==True) ]
+            dfs=[]
+            for league_info in leagues_info:
+                season, last_season = get_season(league_info)
+                df_temp = load_data(league_info["Sorare League"], season)
+                dfs.append(df_temp)
+            if dfs:
+                df = pd.concat(dfs,ignore_index=True)
+            else:
+                st.error("No data found")
+                st.stop()        
+
+    # Load gameweeks
+    gw_path = METADATA_DIR+"/gameweeks.json"
+    gameweeks = load_gameweeks(gw_path,os.path.getmtime(gw_path))
+
+    # Assign gameweek
+    df["gameweek"] = df["Datetime"].apply(lambda d: assign_gameweek(d, gameweeks))
+
+    # --- FILTER BY GAMEWEEK ---
+    available_gws = sorted(df["gameweek"].dropna().unique())
+    with col2:
+        selected_gw = st.selectbox("Filter by Gameweek", available_gws)
+    df = df[df["gameweek"] == selected_gw]
+
+
+    # =========================
+    # CALCUL TOP 5
+    # =========================
+
+    df_cs_top5 = get_top5_teams(df, "%H_CS", "%A_CS", "CS_Prob")
+    df_goals_top5 = get_top5_teams(df, "%H_3GS", "%A_3GS", "Goals_Prob")
+
+    # =========================
+    # DISPLAY ON 2 COLUMNS
+    # =========================
+    col1, col2 = st.columns(2)
+
+    with col1:
+        threshold_defense = get_dynamic_threshold(df, "%H_CS", "%A_CS", percentile=70, min_threshold=0.25)
+        st.markdown("### 🛡️ Top 5 - Chance of clean sheet")
+        st.dataframe(
+            df_cs_top5[["Team", "Stadium", "CS_Prob","Opponent"]]
+            .rename(columns={"CS_Prob": "%CS"})
+            .style.format({"%CS": "{:.2%}"})
+        )
+        st.write(f"threshold : {threshold_defense:.2%}")
+
+    with col2:
+        threshold_attack = get_dynamic_threshold(df, "%H_3GS", "%A_3GS", percentile=70, min_threshold=0.25)
+        st.markdown("### 🎯 Top 5 - Chance of 3+ goals")
+        st.dataframe(
+            df_goals_top5[["Team", "Stadium", "Goals_Prob","Opponent"]]
+            .rename(columns={"Goals_Prob": "% 3+ goals"})
+            .style.format({"% 3+ goals": "{:.2%}"})
+        )
+        st.write(f"threshold : {threshold_attack:.2%}")
+
+    # --- DISPLAY ---
+    st.subheader(f"Matches - {league__or_competition} - {selected_gw}")
+
+    # Sort by date
+    df = df.sort_values("Date")
+
+    # Format date
+    df["Date"] = df["Date"].dt.strftime("%d/%m/%Y")
+
+    # Format probabilities
+    prob_columns = ['%Home','%Draw','%Away','%H_CS','%A_CS','%H_3GS','%A_3GS','%S_P']
+    if filter_type == "League":
+        columns_to_display = ['Date','Time','Home','Away','%Home','%Draw','%Away','%H_CS','%A_CS','%H_3GS','%A_3GS','S_P','%S_P']
+    elif filter_type == "Sorare Competition":
+        columns_to_display = ['Date','Time','league','Home','Away','%Home','%Draw','%Away','%H_CS','%A_CS','%H_3GS','%A_3GS','S_P','%S_P']
+
+    st.dataframe(
+        df[columns_to_display].sort_values(by="%Home",ascending=False).style.format({col: "{:.2%}" for col in prob_columns if col in df.columns})
+    )
