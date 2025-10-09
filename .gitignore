@@ -1,6 +1,7 @@
 env-nextsoccergames
 .DS_Store
-data/
+data/*
+!data/exports/
 __pycache__/
 *.pyc
 .devcontainer/
