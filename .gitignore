@@ -3,3 +3,4 @@ env-nextsoccergames
 data/
 __pycache__/
 *.pyc
+.devcontainer/
