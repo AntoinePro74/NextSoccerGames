@@ -59,13 +59,13 @@ with open("config/fbref_leagues.json", "r") as f:
 available_leagues = [league["Sorare League"] for league in leagues]
 available_competitions = list(dict.fromkeys(league["Sorare competition"] for league in leagues))
 
-# # --- Page Load Data ---
-# if "running" not in st.session_state:
-#     st.session_state.running = False
-# if "stop_pipeline" not in st.session_state:
-#     st.session_state.stop_pipeline = False
-# if "last_update" not in st.session_state:
-#     st.session_state.last_update = load_last_update()
+# --- Page Load Data ---
+if "running" not in st.session_state:
+    st.session_state.running = False
+if "stop_pipeline" not in st.session_state:
+    st.session_state.stop_pipeline = False
+if "last_update" not in st.session_state:
+    st.session_state.last_update = load_last_update()
 
 
 # if page == "Load Data":
