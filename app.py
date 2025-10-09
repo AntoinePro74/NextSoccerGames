@@ -5,7 +5,7 @@ import pandas as pd
 import os
 
 from src.dashboard.utils_data import load_last_update,save_last_update,load_data, load_gameweeks, assign_gameweek
-from src.pipeline.run_pipeline import run_all_leagues
+#from src.pipeline.run_pipeline import run_all_leagues
 from src.scraping.utils_scraping import get_season
 from src.dashboard.utils_streamlit import get_top5_teams,get_dynamic_threshold ,get_best_teams,get_team_matches_details
 
@@ -59,47 +59,47 @@ with open("config/fbref_leagues.json", "r") as f:
 available_leagues = [league["Sorare League"] for league in leagues]
 available_competitions = list(dict.fromkeys(league["Sorare competition"] for league in leagues))
 
-# --- Page Load Data ---
-if "running" not in st.session_state:
-    st.session_state.running = False
-if "stop_pipeline" not in st.session_state:
-    st.session_state.stop_pipeline = False
-if "last_update" not in st.session_state:
-    st.session_state.last_update = load_last_update()
+# # --- Page Load Data ---
+# if "running" not in st.session_state:
+#     st.session_state.running = False
+# if "stop_pipeline" not in st.session_state:
+#     st.session_state.stop_pipeline = False
+# if "last_update" not in st.session_state:
+#     st.session_state.last_update = load_last_update()
 
 
-if page == "Load Data":
-    col1, col2, col3 = st.columns([1, 1, 1.5])
-    with col1:
-        load_clicked = st.button(
-            "⚽ Scraping Data",
-            help="It can take up to 15 minutes"
-        )
-    with col2:
-        if st.session_state.get("last_update"):
-            st.markdown(
-                f"**Last update :** {st.session_state['last_update'].strftime('%d/%m/%Y %H:%M')}"
-            )
-        else:
-            st.markdown("**Last update :** —")
-    with col3:
-        stop_clicked = st.button(
-            "🛑 Stop"
-        )
+# if page == "Load Data":
+#     col1, col2, col3 = st.columns([1, 1, 1.5])
+#     with col1:
+#         load_clicked = st.button(
+#             "⚽ Scraping Data",
+#             help="It can take up to 15 minutes"
+#         )
+#     with col2:
+#         if st.session_state.get("last_update"):
+#             st.markdown(
+#                 f"**Last update :** {st.session_state['last_update'].strftime('%d/%m/%Y %H:%M')}"
+#             )
+#         else:
+#             st.markdown("**Last update :** —")
+#     with col3:
+#         stop_clicked = st.button(
+#             "🛑 Stop"
+#         )
 
-    status_ph = st.empty()
+#     status_ph = st.empty()
 
-    if load_clicked :
-        st.session_state.stop_pipeline = False
-        st.session_state.running = True
-        status_ph.text("Uploading…")
-        run_all_leagues()
-        st.session_state.last_update = datetime.now()
-        save_last_update(st.session_state.last_update) 
-        st.session_state.running = False
+#     if load_clicked :
+#         st.session_state.stop_pipeline = False
+#         st.session_state.running = True
+#         status_ph.text("Uploading…")
+#         run_all_leagues()
+#         st.session_state.last_update = datetime.now()
+#         save_last_update(st.session_state.last_update) 
+#         st.session_state.running = False
 
-    if stop_clicked :
-        st.session_state.stop_pipeline = True
+#     if stop_clicked :
+#         st.session_state.stop_pipeline = True
 
 # --- Page Sorare League & Gameweek ---
 if page == "Sorare League & Gameweek":
