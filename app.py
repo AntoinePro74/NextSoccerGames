@@ -67,6 +67,15 @@ if "stop_pipeline" not in st.session_state:
 if "last_update" not in st.session_state:
     st.session_state.last_update = load_last_update()
 
+if page == "Load Data":
+    st.warning("⚠️ Data loading is not available in this Streamlit Cloud version.")
+
+    st.info(
+        "This feature requires local scraping and data processing, "
+        "which cannot run on Streamlit Cloud. "
+        "Please use the local version of the app to access this functionality."
+    )
+
 
 # if page == "Load Data":
 #     col1, col2, col3 = st.columns([1, 1, 1.5])
