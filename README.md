@@ -19,28 +19,31 @@ The app computes:
 
 ## 📊 Features
 
+### 🔧 Full version (local app)
+
 - ✅ **Scraping** key team stats (goals, xG, etc.) from FBref
 - 🧹 **Cleaning and processing** seasonal stats
 - 🧠 **Blending data** between current and previous seasons, with special handling for newly promoted teams
 - 🔄 **Poisson model** to simulate scorelines and compute event probabilities
-- 📆 **Automatic Gameweek generation** based on upcoming fixtures
-- 🌍 **Multi-league support** (customizable)
 - 🗂️ **Local CSV backups** for raw, processed, and exported data
-- 🌐 **Streamlit dashboard** with 3 interactive views:
+
+### 🌐 Streamlit Cloud version
+
+Due to limitations of Streamlit Cloud (no browser automation or file writing), the following features are **not available online**:
+
+- ❌ Web scraping from FBref
+- ❌ Local data processing and blending
+- ❌ Probabilistic modeling (Poisson simulation)
+- ❌ Local file export (CSV backups)
+
+However, you can still:
+
+- 📆 View **pre-computed gameweek data**
+- 🌍 Explore multiple leagues and competitions
+- 📊 Use the **Streamlit dashboard** with:
   - League-level analysis
   - Competition-level aggregation
   - Gameweek calendar with favorable matchups
-
----
-
-## 🛠️ Tech Stack
-
-- **Python**
-- **Pandas** and **numpy** for data manipulation
-- **Selenium** for web scraping
-- **Streamlit** for UI
-- **Poisson distribution** for probability modeling
-- _(optional)_ Google Sheets API for external data export
 
 ---
 
