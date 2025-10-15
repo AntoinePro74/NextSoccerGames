@@ -1,23 +1,5 @@
 [
   {
-    "gw": "GW16",
-    "startDate": "2025-10-07T14:00:00Z",
-    "endDate": "2025-10-10T13:59:00Z",
-    "timeZone": "Europe/Paris"
-  },
-  {
-    "gw": "GW17",
-    "startDate": "2025-10-10T14:00:00Z",
-    "endDate": "2025-10-14T13:59:00Z",
-    "timeZone": "Europe/Paris"
-  },
-  {
-    "gw": "GW18",
-    "startDate": "2025-10-14T14:00:00Z",
-    "endDate": "2025-10-17T13:59:00Z",
-    "timeZone": "Europe/Paris"
-  },
-  {
     "gw": "GW19",
     "startDate": "2025-10-17T14:00:00Z",
     "endDate": "2025-10-21T13:59:00Z",
